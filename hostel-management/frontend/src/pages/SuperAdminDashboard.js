@@ -240,10 +240,10 @@ function AddUser() {
                 <hr style={{margin:'8px 0 16px', borderColor:'#e2e8f0'}}/>
                 <p style={{fontSize:14, fontWeight:700, color:'#64748b', marginBottom:12}}>PARENT/GUARDIAN DETAILS</p>
                 <div className="form-row">
-                  {f('parentName','Parent Name','text',false,'')}
-                  {f('parentMobile','Parent Mobile','text',false,'')}
+                  {f('parentName','Parent Name','text',true,'')}
+                  {f('parentMobile','Parent Mobile','text',true,'')}
                 </div>
-                {f('parentEmail','Parent Email','email',false,'')}
+                {f('parentEmail','Parent Email','email',true,'')}
               </>
             )}
             <button type="submit" className="btn btn-primary btn-block" disabled={loading} style={{marginTop:8}}>
