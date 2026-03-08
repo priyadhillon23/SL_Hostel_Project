@@ -199,3 +199,4 @@ EMAIL_FROM=Hostel Management <your_email@gmail.com>
 - Modal dialogs for forms
 - Auto-fill from user profile
 - Filter tabs for data tables
+Added email and WhatsApp notification feature
