@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
+import TopBar from '../components/TopBar';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
@@ -576,10 +577,7 @@ export default function StudentDashboard() {
     <div className="layout">
       <Sidebar navItems={navItems} basePath="/student" />
       <div className="main-content">
-        <div className="top-bar">
-          <span className="top-bar-title">🏫 Student Portal</span>
-          <span style={{fontSize: 13, color: '#64748b'}}>Hostel Management System</span>
-        </div>
+        <TopBar title="🏫 Student Portal" />
         <div className="page-content">
           <Routes>
             <Route path="" element={<DashboardHome />} />
