@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import AppLogo from '../components/AppLogo';
 
 const roles = [
   { id: 'student', label: 'Student', icon: '🎓', hint: 'Use Roll Number or Email + Password (default: mobile number)' },
@@ -59,7 +60,9 @@ export default function LoginPage() {
       <div className="login-container">
         <div className="login-card">
           <div className="login-logo">
-            <div className="login-logo-icon">🏫</div>
+            <div className="login-logo-icon">
+              <AppLogo className="login-logo-img" />
+            </div>
             <h1>Hostel Management</h1>
             <p>Smart Hostel Administration System</p>
           </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import AppLogo from './AppLogo';
 
 export default function Sidebar({ navItems, basePath }) {
   const { user, logout } = useAuth();
@@ -25,7 +26,9 @@ export default function Sidebar({ navItems, basePath }) {
     <div className="sidebar">
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">🏫</div>
+          <div className="sidebar-logo-icon">
+            <AppLogo className="sidebar-logo-img" />
+          </div>
           <div>
             <div className="sidebar-title">Hostel HMS</div>
             <div className="sidebar-subtitle">Management System</div>
