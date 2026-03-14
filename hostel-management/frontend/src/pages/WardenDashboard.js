@@ -5,10 +5,14 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import DiscussionPanel from '../components/DiscussionPanel';
 
 const navItems = [
   { path: '', icon: '🏠', label: 'Dashboard' },
   { path: '/leaves', icon: '📋', label: 'Leave Requests' },
+  { path: '/complaints', icon: '📢', label: 'Complaints' },
+  { path: '/mess-menu', icon: '🍽️', label: 'Weekly Mess Menu' },
+  { path: '/rooms', icon: '🛏️', label: 'Room Allocation' },
   { path: '/students', icon: '🎓', label: 'Student Directory' },
 ];
 
@@ -36,8 +40,13 @@ function WardenHome() {
         <div className="card-header"><span className="card-title">⚡ Quick Actions</span></div>
         <div className="card-body" style={{display:'flex', gap:16, flexWrap:'wrap'}}>
           <button className="btn btn-primary" onClick={() => navigate('/warden/leaves')}>📋 Review Pending Leaves ({stats.pendingLeaves || 0})</button>
+          <button className="btn btn-outline" onClick={() => navigate('/warden/complaints')}>📢 View Complaints</button>
+          <button className="btn btn-outline" onClick={() => navigate('/warden/mess-menu')}>🍽️ View Weekly Mess Menu</button>
           <button className="btn btn-outline" onClick={() => navigate('/warden/students')}>🎓 View Student Directory</button>
         </div>
+      </div>
+      <div style={{marginTop: 16}}>
+        <DiscussionPanel />
       </div>
     </div>
   );
@@ -157,6 +166,252 @@ function LeaveRequests() {
   );
 }
 
+function WardenComplaints() {
+  const [complaints, setComplaints] = useState([]);
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
+
+  const fetchComplaints = async () => {
+    try {
+      const { data } = await api.get('/complaints/all');
+      setComplaints(data.data);
+    } catch {}
+  };
+
+  const filtered = complaints.filter(c => {
+    if (filter !== 'all' && c.status !== filter) return false;
+    if (!search) return true;
+    const name = c.studentId?.userId?.name?.toLowerCase() || '';
+    const room = c.roomNumber?.toLowerCase() || '';
+    const type = c.complaintType?.toLowerCase() || '';
+    return (
+      name.includes(search.toLowerCase()) ||
+      room.includes(search.toLowerCase()) ||
+      type.includes(search.toLowerCase())
+    );
+  });
+
+  return (
+    <div>
+      <h2 className="section-title">📢 Complaints Overview</h2>
+      <div className="flex items-center gap-4 mb-4" style={{flexWrap:'wrap'}}>
+        <div className="filter-tabs" style={{margin:0}}>
+          {['all','pending','working','resolved'].map(f => (
+            <button key={f} className={`filter-tab ${filter===f?'active':''}`} onClick={() => setFilter(f)}>
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
+          ))}
+        </div>
+        <input
+          className="form-control"
+          style={{maxWidth:260}}
+          placeholder="🔍 Search by student/room/type..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+      </div>
+
+      <div className="card">
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Room</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Student</th>
+                <th>Assigned To</th>
+                <th>Raised On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={7}>
+                    <div className="empty-state">
+                      <div className="empty-state-icon">✅</div>
+                      <p>No complaints found</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.map(c => (
+                <tr key={c._id}>
+                  <td style={{fontWeight:600}}>{c.roomNumber}</td>
+                  <td><span className="complaint-type-badge">{c.complaintType}</span></td>
+                  <td style={{fontSize:13, maxWidth:220}}>{c.description}</td>
+                  <td><span className={`badge badge-${c.status}`}>{c.status}</span></td>
+                  <td style={{fontSize:13}}>{c.studentId?.userId?.name}</td>
+                  <td style={{fontSize:13}}>
+                    {c.assignedTo ? `${c.assignedTo.name} (${c.assignedTo.employeeId || '-'})` : 'Unassigned'}
+                  </td>
+                  <td style={{fontSize:12, color:'#64748b'}}>{new Date(c.createdAt).toLocaleDateString('en-IN')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WardenMessMenu() {
+  const [menus, setMenus] = useState([]);
+
+  useEffect(() => {
+    api.get('/mess/menu').then(r => setMenus(r.data.data || [])).catch(()=>{});
+  }, []);
+
+  const formatDate = (d) => new Date(d).toLocaleDateString('en-IN', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'short',
+  });
+
+  return (
+    <div>
+      <h2 className="section-title">🍽️ Weekly Mess Menu</h2>
+      <p style={{marginBottom:16, color:'#64748b', fontSize:13}}>
+        Upcoming 7 days menu for the hostel mess, day wise.
+      </p>
+      {menus.length === 0 ? (
+        <div className="card">
+          <div className="card-body">
+            <div className="empty-state">
+              <div className="empty-state-icon">📭</div>
+              <p>No menu available</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="card">
+          <div className="card-body" style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap:16}}>
+            {menus.map(m => (
+              <div key={m._id} className="mini-card" style={{borderRadius:12, padding:14, background:'#f8fafc', border:'1px solid #e2e8f0'}}>
+                <div style={{marginBottom:6, fontWeight:700, fontSize:15}}>{m.dayOfWeek}</div>
+                <div style={{marginBottom:8, fontSize:12, color:'#64748b'}}>{formatDate(m.date)}</div>
+                <div style={{fontSize:13, marginBottom:6}}>
+                  <strong>Breakfast:</strong> {m.breakfast || '-'}
+                </div>
+                <div style={{fontSize:13, marginBottom:6}}>
+                  <strong>Lunch:</strong> {m.lunch || '-'}
+                </div>
+                <div style={{fontSize:13}}>
+                  <strong>Dinner:</strong> {m.dinner || '-'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RoomAllocation() {
+  const [data, setData] = useState({ allocated: [], vacant: [] });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await api.get('/rooms/summary');
+        setData(data.data || { allocated: [], vacant: [] });
+      } catch {
+        setData({ allocated: [], vacant: [] });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div>
+      <h2 className="section-title">🛏️ Room Allocation</h2>
+      <p style={{marginBottom:16, color:'#64748b', fontSize:13}}>
+        Overview of allocated rooms with student roll numbers and list of currently vacant rooms.
+      </p>
+      {loading ? (
+        <div className="card"><div className="card-body"><p>Loading room data...</p></div></div>
+      ) : (
+        <div className="grid-2">
+          <div className="card">
+            <div className="card-header"><span className="card-title">🏠 Allocated Rooms</span></div>
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Room No</th>
+                    <th>Block</th>
+                    <th>Student Roll No</th>
+                    <th>Student Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.allocated.length === 0 ? (
+                    <tr>
+                      <td colSpan={4}>
+                        <div className="empty-state">
+                          <div className="empty-state-icon">📭</div>
+                          <p>No allocated rooms configured</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : data.allocated.map(r => (
+                    <tr key={r.roomNumber}>
+                      <td>{r.roomNumber}</td>
+                      <td>{r.hostelBlock || '-'}</td>
+                      <td>{r.studentRollNumber || '-'}</td>
+                      <td>{r.studentName || '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="card-header"><span className="card-title">📄 Vacant Rooms</span></div>
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Room No</th>
+                    <th>Block</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.vacant.length === 0 ? (
+                    <tr>
+                      <td colSpan={2}>
+                        <div className="empty-state">
+                          <div className="empty-state-icon">✅</div>
+                          <p>No vacant rooms listed</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : data.vacant.map(r => (
+                    <tr key={r.roomNumber}>
+                      <td>{r.roomNumber}</td>
+                      <td>{r.hostelBlock || '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StudentDirectory() {
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState('');
@@ -237,6 +492,9 @@ export default function WardenDashboard() {
           <Routes>
             <Route path="" element={<WardenHome />} />
             <Route path="/leaves" element={<LeaveRequests />} />
+            <Route path="/complaints" element={<WardenComplaints />} />
+            <Route path="/mess-menu" element={<WardenMessMenu />} />
+            <Route path="/rooms" element={<RoomAllocation />} />
             <Route path="/students" element={<StudentDirectory />} />
           </Routes>
         </div>

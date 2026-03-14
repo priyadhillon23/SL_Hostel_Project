@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import DiscussionPanel from '../components/DiscussionPanel';
 
 const navItems = [
   { path: '', icon: '🏠', label: 'Dashboard' },
@@ -44,6 +45,9 @@ function MessHome() {
           <button className="btn btn-success" onClick={() => navigate('/mess-admin/menu')}>📅 Manage Menu</button>
           <button className="btn btn-outline" onClick={() => navigate('/mess-admin/reviews')}>⭐ View Reviews</button>
         </div>
+      </div>
+      <div style={{marginTop: 16}}>
+        <DiscussionPanel />
       </div>
     </div>
   );

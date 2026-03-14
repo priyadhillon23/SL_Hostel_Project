@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import DiscussionPanel from '../components/DiscussionPanel';
 
 const navItems = [
   { path: '', icon: '🏠', label: 'Dashboard' },
@@ -99,6 +100,7 @@ function DashboardHome() {
           </div>
         </div>
 
+        <DiscussionPanel />
         <div className="card">
           <div className="card-header"><span className="card-title">🔧 Recent Complaints</span><button className="btn btn-sm btn-primary" onClick={() => navigate('/student/complaints')}>Raise Complaint</button></div>
           <div className="card-body" style={{padding: 0}}>
@@ -570,14 +572,11 @@ function ChangePassword() {
 }
 
 export default function StudentDashboard() {
-  const pageTitles = { '': 'Dashboard', '/leave': 'Leave Management', '/mess': 'Mess Menu', '/complaints': 'Complaints', '/profile': 'My Profile', '/change-password': 'Change Password' };
-  const [activeTitle, setActiveTitle] = useState('Dashboard');
-
   return (
     <div className="layout">
       <Sidebar navItems={navItems} basePath="/student" />
       <div className="main-content">
-        <TopBar title="🏫 Student Portal" />
+        <TopBar title="NIT KKR HOSTEL MS" subtitle="Student Portal" />
         <div className="page-content">
           <Routes>
             <Route path="" element={<DashboardHome />} />

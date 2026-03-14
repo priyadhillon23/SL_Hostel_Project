@@ -86,4 +86,34 @@ const sendComplaintResolvedEmail = async ({ studentEmail, studentName, complaint
   return sendEmail({ to: studentEmail, subject: `Complaint Resolved - ${complaintType}`, html });
 };
 
-module.exports = { sendEmail, sendLeaveApprovalEmail, sendLeaveRejectionEmail, sendComplaintResolvedEmail };
+const sendPasswordResetEmail = async ({ userEmail, userName, resetLink }) => {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9;">
+      <div style="background: #4f46e5; color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="margin:0">🏫 Hostel Management System</h1>
+      </div>
+      <div style="background: white; padding: 25px; border-radius: 0 0 8px 8px;">
+        <h2 style="color: #111827;">Reset Your Password</h2>
+        <p>Dear <strong>${userName || 'User'}</strong>,</p>
+        <p>We received a request to reset the password for your hostel management account.</p>
+        <p>You can reset your password by clicking the button below:</p>
+        <p style="text-align:center; margin: 24px 0;">
+          <a href="${resetLink}" style="background:#4f46e5;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">
+            Reset Password
+          </a>
+        </p>
+        <p>If the button doesn't work, copy and paste this link into your browser:</p>
+        <p style="word-break:break-all; font-size: 12px; color:#4b5563;">${resetLink}</p>
+        <p style="font-size: 12px; color:#6b7280;">If you did not request this, you can safely ignore this email. This link will expire in 1 hour.</p>
+      </div>
+    </div>`;
+  return sendEmail({ to: userEmail, subject: 'Reset your hostel account password', html });
+};
+
+module.exports = {
+  sendEmail,
+  sendLeaveApprovalEmail,
+  sendLeaveRejectionEmail,
+  sendComplaintResolvedEmail,
+  sendPasswordResetEmail
+};

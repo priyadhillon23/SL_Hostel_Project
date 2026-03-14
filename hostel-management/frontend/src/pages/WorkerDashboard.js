@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import DiscussionPanel from '../components/DiscussionPanel';
 
 const navItems = [
   { path: '', icon: '🏠', label: 'Dashboard' },
@@ -104,6 +105,9 @@ function WorkerComplaints() {
             </tbody>
           </table>
         </div>
+      </div>
+      <div style={{marginTop: 16}}>
+        <DiscussionPanel />
       </div>
 
       {selected && (
