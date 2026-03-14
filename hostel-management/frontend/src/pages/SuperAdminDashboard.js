@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import DiscussionPanel from '../components/DiscussionPanel';
 
 const navItems = [
   { path: '', icon: '📊', label: 'Analytics' },
@@ -40,6 +41,9 @@ function Analytics() {
           <button className="btn btn-primary" onClick={() => navigate('/super-admin/add-user')}>➕ Add Student / Staff</button>
           <button className="btn btn-outline" onClick={() => navigate('/super-admin/users')}>👥 Manage Users</button>
         </div>
+      </div>
+      <div style={{marginTop: 16}}>
+        <DiscussionPanel />
       </div>
     </div>
   );

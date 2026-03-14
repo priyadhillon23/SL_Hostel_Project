@@ -42,6 +42,8 @@ app.use('/api/leave', require('./routes/leave'));
 app.use('/api/mess', require('./routes/mess'));
 app.use('/api/complaints', require('./routes/complaints'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/discussion', require('./routes/discussion'));
+app.use('/api/rooms', require('./routes/rooms'));
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ success: true, message: 'Hostel Management API is running' }));
