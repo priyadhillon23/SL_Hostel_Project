@@ -11,6 +11,14 @@ const errorHandler = require('./middleware/errorHandler');
 connectDB();
 
 const app = express();
+const cors = require("cors");
+
+app.set("trust proxy", 1);
+
+app.use(cors({
+  origin: "https://sl-hostel-project-2.onrender.com",
+  credentials: true
+}));
 
 // Security middleware
 app.use(helmet());

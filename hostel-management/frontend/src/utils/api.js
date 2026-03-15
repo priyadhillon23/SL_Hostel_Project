@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// In production (e.g. Vercel), set REACT_APP_API_URL to your backend URL (e.g. https://your-backend.onrender.com)
+const baseURL = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api` : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' }
 });
 
