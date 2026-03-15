@@ -20,6 +20,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
       }
     }
+  
+    setLoading(false);   // ADD THIS LINE
   }, []);
 
   const login = async (identifier, password, role) => {
